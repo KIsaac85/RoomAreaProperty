@@ -26,8 +26,9 @@ namespace RoomAreaProperty
             //To convert from internal units to the format units
             FormatOptions areaFormatOptions = doc.GetUnits().GetFormatOptions(SpecTypeId.Area);
             ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
-
             IList<Element> AreaElements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+            //String builder to save data
             StringBuilder sb = new StringBuilder();
             if (AreaElements.Count!=0)
             {
