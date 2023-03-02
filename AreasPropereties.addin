@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Text>Area Properties</Text>
+		<Description>Export Areas Properties To TXT file</Description>
+		<Assembly>D:\Fievr\AreaExport\Project\RoomAreaProperty\obj\Debug\RoomAreaProperty.dll</Assembly>
+		<AddinID>
+			1B214995-EC67-45CC-91B5-0FBCC946DB61
+		</AddinID>
+		<FullClassName>RoomAreaProperty.AreasExport</FullClassName>
+		<ClientId>
+			FBC008F6-0D93-4DB0-9CFF-CA8575F5C8F1
+		</ClientId>
+		<VendorId>ADSK</VendorId>
+		<Author>Karim Isaac Fahmy</Author>
+		<VendorDescription>Autodesk, www.autodesk.com</VendorDescription>
+	</AddIn>
+</RevitAddIns>
