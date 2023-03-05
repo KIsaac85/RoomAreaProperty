@@ -329,23 +329,28 @@ namespace RoomAreas
                     Area _area = _element as Area;
                     SpatialElementBoundaryOptions spOPT = new SpatialElementBoundaryOptions();
 
+                    m.ElementId = _element.Id.ToString();
                     //The forloop is created to retrieve the boundry lines start and end points.
                     foreach (var boundarySegments in _area.GetBoundarySegments(spOPT))
                     {
+                        m.TypeName = _area.Name;
+                        m.FloorName = _area.Level.Name;
+                        m.RoomArea = _area.Area;
                         foreach (var item in boundarySegments)
                         {
                             Curve curv = item.GetCurve();
                             //All properties were retrieved from element and areas except
                             // the start and endpoint of curves
 
-                            m.ElementId = _element.Id.ToString();
-                            m.TypeName = _area.Name;
-                            m.FloorName = _area.Level.Name;
-                            m.RoomArea = _area.Area;
+                            
+                            
                             m.CornerCoordinateStart = curv.GetEndPoint(0);
                             m.CornerCoordinateEnd = curv.GetEndPoint(1);
+                            
                         }
+                        
                     }
+                    _areaProperties.Add(m.ElementId, m);
                 }
                 //m.metadata = new Va3cContainer.Va3cMaterialMetadata();
                 //m.metadata.type = "material";
@@ -424,22 +429,22 @@ namespace RoomAreas
 
       _container.materials = _areaProperties.Values.ToList();
 
-      //_container.geometries = _geometries.Values.ToList();
+            //_container.geometries = _geometries.Values.ToList();
 
-      //_container.obj.children = _objects.Values.ToList();
+            //_container.obj.children = _objects.Values.ToList();
 
-      // Serialise scene
+            //Serialise scene
 
-      //using( FileStream stream
-      //  = File.OpenWrite( filename ) )
-      //{
-      //  DataContractJsonSerializer serialiser
-      //    = new DataContractJsonSerializer(
-      //      typeof( Va3cContainer ) );
-      //  serialiser.WriteObject( stream, _container );
-      //}
+      //using (FileStream stream
+      //  = File.OpenWrite(filename))
+      //      {
+      //          DataContractJsonSerializer serialiser
+      //            = new DataContractJsonSerializer(
+      //              typeof(Va3cContainer));
+      //          serialiser.WriteObject(stream, _container);
+      //      }
 
-      JsonSerializerSettings settings
+            JsonSerializerSettings settings
         = new JsonSerializerSettings();
 
       settings.NullValueHandling

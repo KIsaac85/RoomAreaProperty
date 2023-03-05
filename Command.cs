@@ -30,8 +30,7 @@ namespace RoomAreas
           System.Reflection.Assembly
             .GetExecutingAssembly().Location );
 
-        filename = Path.Combine( filename,
-          "Newtonsoft.Json.dll" );
+        filename = Path.Combine( filename,"Newtonsoft.Json.dll" );
 
         if( File.Exists( filename ) )
         {
@@ -58,8 +57,7 @@ namespace RoomAreas
       Va3cExportContext context
         = new Va3cExportContext( doc, filename );
 
-      CustomExporter exporter = new CustomExporter(
-        doc, context );
+      CustomExporter exporter = new CustomExporter(doc, context );
 
       // Note: Excluding faces just suppresses the 
       // OnFaceBegin calls, not the actual processing 
@@ -364,8 +362,7 @@ namespace RoomAreas
         return Result.Cancelled;
       }
 
-      filename = Path.Combine( _output_folder_path, 
-        filename );
+      filename = Path.Combine( _output_folder_path, filename );
 
       // Ask user whether to interactively choose 
       // which parameters to export or just export 
@@ -391,8 +388,7 @@ namespace RoomAreas
 
       // Save file.
 
-      ExportView3D( doc.ActiveView as View3D,
-        filename );
+      ExportView3D( doc.ActiveView as View3D,filename );
 
       return Result.Succeeded;
     }
