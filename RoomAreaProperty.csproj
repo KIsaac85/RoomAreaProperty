@@ -62,20 +62,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AreasExport.cs" />
-    <Compile Include="JSON Export Code\App.cs" />
-    <Compile Include="JSON Export Code\Command.cs" />
-    <Compile Include="JSON Export Code\ParameterFilter.cs">
+    <Compile Include="AreasExportOld.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="ParameterFilter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="JSON Export Code\ParameterFilter.Designer.cs">
+    <Compile Include="ParameterFilter.Designer.cs">
       <DependentUpon>ParameterFilter.cs</DependentUpon>
     </Compile>
-    <Compile Include="JSON Export Code\UserSettings.cs" />
-    <Compile Include="JSON Export Code\Util.cs" />
-    <Compile Include="JSON Export Code\Va3cExportContext.cs" />
-    <Compile Include="JSON Export Code\Va3cObject.cs" />
-    <Compile Include="JSON Export Code\Va3cScene.cs" />
+    <Compile Include="UserSettings.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Va3cExportContext.cs" />
+    <Compile Include="Va3cObject.cs" />
+    <Compile Include="Va3cScene.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +87,7 @@
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JSON Export Code\ParameterFilter.resx">
+    <EmbeddedResource Include="ParameterFilter.resx">
       <DependentUpon>ParameterFilter.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

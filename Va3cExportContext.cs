@@ -9,7 +9,7 @@ using Autodesk.Revit.DB;
 using Newtonsoft.Json;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreas
 {
   // Done:
   // Check instance transformation
@@ -27,14 +27,25 @@ namespace RvtVa3c
 
   public class Va3cExportContext : IExportContext
   {
-    /// <summary>
-    /// Scale entire top level BIM object node in JSON
-    /// output. A scale of 1.0 will output the model in 
-    /// millimetres. Currently we scale it to decimetres
-    /// so that a typical model has a chance of fitting 
-    /// into a cube with side length 100, i.e. 10 metres.
-    /// </summary>
-    double _scale_bim = 1.0;
+        Document _doc;
+        string _filename;
+        AreaContainer _container;
+        Dictionary<string, AreaContainer.AreaProperties> _areaProperties;
+        public string myjs = null;
+        public Va3cExportContext(Document document, string filename)
+        {
+            _doc = document;
+            _filename = filename;
+        }
+
+        /// <summary>
+        /// Scale entire top level BIM object node in JSON
+        /// output. A scale of 1.0 will output the model in 
+        /// millimetres. Currently we scale it to decimetres
+        /// so that a typical model has a chance of fitting 
+        /// into a cube with side length 100, i.e. 10 metres.
+        /// </summary>
+        double _scale_bim = 1.0;
 
     /// <summary>
     /// Scale applied to each vertex in each individual 
@@ -230,178 +241,179 @@ namespace RvtVa3c
     }
     #endregion // VertexLookupInt
 
-    Document _doc;
-        //Filters of Areas
-        FilteredElementCollector collector = new FilteredElementCollector(_doc);
-        ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
+   
 
 
 
 
-        string _filename;
-    AreaContainer _container;
-    Dictionary<string, AreaContainer.AreaProperties> _materials;
-    Dictionary<string, AreaContainer.Va3cObject> _objects;
-    Dictionary<string, AreaContainer.Va3cGeometry> _geometries;
 
-    AreaContainer.Va3cObject _currentElement;
+    
 
-    // Keyed on material uid to handle several materials per element:
+        //Dictionary<string, AreaContainer.Va3cObject> _objects;
+        //Dictionary<string, AreaContainer.Va3cGeometry> _geometries;
 
-    Dictionary<string, AreaContainer.Va3cObject> _currentObject;
-    Dictionary<string, AreaContainer.Va3cGeometry> _currentGeometry;
-    Dictionary<string, VertexLookupInt> _vertices;
+        //AreaContainer.Va3cObject _currentElement;
+        
+        // Keyed on material uid to handle several materials per element:
 
-    Stack<ElementId> _elementStack = new Stack<ElementId>();
-    Stack<Transform> _transformationStack = new Stack<Transform>();
+        //Dictionary<string, AreaContainer.Va3cObject> _currentObject;
+        //Dictionary<string, AreaContainer.Va3cGeometry> _currentGeometry;
+        //Dictionary<string, VertexLookupInt> _vertices;
 
-    string _currentMaterialUid;
+        //Stack<ElementId> _elementStack = new Stack<ElementId>();
+        //Stack<Transform> _transformationStack = new Stack<Transform>();
 
-    public string myjs = null;
+        //string _currentMaterialUid;
 
-    AreaContainer.Va3cObject CurrentObjectPerMaterial
-    {
-      get
-      {
-        return _currentObject[_currentMaterialUid];
-      }
+        //public string myjs = null;
+
+        //AreaContainer.Va3cObject CurrentObjectPerMaterial
+        //{
+        //  get
+        //  {
+        //    return _currentObject[_currentMaterialUid];
+        //  }
+        //}
+
+        //AreaContainer.Va3cGeometry CurrentGeometryPerMaterial
+        //{
+        //  get
+        //  {
+        //    return _currentGeometry[_currentMaterialUid];
+        //  }
+        //}
+
+        //VertexLookupInt CurrentVerticesPerMaterial
+        //{
+        //  get
+        //  {
+        //    return _vertices[_currentMaterialUid];
+        //  }
+        //}
+
+        //Transform CurrentTransform
+        //{
+        //  get
+        //  {
+        //    return _transformationStack.Peek();
+        //  }
+        //}
+
+        //public override string ToString()
+        //{
+        //  return myjs;
+        //}
+
+        /// <summary>
+        /// Set the current material
+        /// </summary>
+        void SetCurrentMaterial( string uidMaterial )
+        {
+            //Filters of Areas
+            FilteredElementCollector collector = new FilteredElementCollector(_doc);
+            ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
+
+            //To convert from internal units to the format units
+            FormatOptions areaFormatOptions = _doc.GetUnits().GetFormatOptions(SpecTypeId.Area);
+            ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
+            IList<Element> AreaElements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+            if ( AreaElements.Count!=0 )
+            {
+
+
+              AreaContainer.AreaProperties m = new AreaContainer.AreaProperties();
+                foreach (Element _element in AreaElements)
+                {
+                    Options _options = new Options();
+                    Area _area = _element as Area;
+                    SpatialElementBoundaryOptions spOPT = new SpatialElementBoundaryOptions();
+
+                    //The forloop is created to retrieve the boundry lines start and end points.
+                    foreach (var boundarySegments in _area.GetBoundarySegments(spOPT))
+                    {
+                        foreach (var item in boundarySegments)
+                        {
+                            Curve curv = item.GetCurve();
+                            //All properties were retrieved from element and areas except
+                            // the start and endpoint of curves
+
+                            m.ElementId = _element.Id.ToString();
+                            m.TypeName = _area.Name;
+                            m.FloorName = _area.Level.Name;
+                            m.RoomArea = _area.Area;
+                            m.CornerCoordinateStart = curv.GetEndPoint(0);
+                            m.CornerCoordinateEnd = curv.GetEndPoint(1);
+                        }
+                    }
+                }
+                //m.metadata = new Va3cContainer.Va3cMaterialMetadata();
+                //m.metadata.type = "material";
+                //m.metadata.version = 4.2;
+                //m.metadata.generator = "RvtVa3c 2015.0.0.0";
+
+                
+        
+       
+            }
+     // _currentMaterialUid = uidMaterial;
+
+      //string uid_per_material = _currentElement.uuid + "-" + uidMaterial;
+
+      //if( !_currentObject.ContainsKey( uidMaterial ) )
+      //{
+      //  Debug.Assert( !_currentGeometry.ContainsKey( uidMaterial ), "expected same keys in both" );
+
+      //  _currentObject.Add( uidMaterial, new AreaContainer.Va3cObject() );
+      //  CurrentObjectPerMaterial.name = _currentElement.name;
+      //  CurrentObjectPerMaterial.geometry = uid_per_material;
+      //  CurrentObjectPerMaterial.material = _currentMaterialUid;
+      //  CurrentObjectPerMaterial.matrix = new double[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+      //  CurrentObjectPerMaterial.type = "Mesh";
+      //  CurrentObjectPerMaterial.uuid = uid_per_material;
+      //}
+
+      //if( !_currentGeometry.ContainsKey( uidMaterial ) )
+      //{
+
+      //}
+
+      //if( !_vertices.ContainsKey( uidMaterial ) )
+      //{
+      //  _vertices.Add( uidMaterial, new VertexLookupInt() );
+      //}
     }
 
-    AreaContainer.Va3cGeometry CurrentGeometryPerMaterial
-    {
-      get
-      {
-        return _currentGeometry[_currentMaterialUid];
-      }
-    }
-
-    VertexLookupInt CurrentVerticesPerMaterial
-    {
-      get
-      {
-        return _vertices[_currentMaterialUid];
-      }
-    }
-
-    Transform CurrentTransform
-    {
-      get
-      {
-        return _transformationStack.Peek();
-      }
-    }
-
-    public override string ToString()
-    {
-      return myjs;
-    }
-
-    /// <summary>
-    /// Set the current material
-    /// </summary>
-    void SetCurrentMaterial( string uidMaterial )
-    {
-      if( !_materials.ContainsKey( uidMaterial ) )
-      {
-        Material material = _doc.GetElement(
-          uidMaterial ) as Material;
-
-        AreaContainer.AreaProperties m
-          = new AreaContainer.AreaProperties();
-
-        //m.metadata = new Va3cContainer.Va3cMaterialMetadata();
-        //m.metadata.type = "material";
-        //m.metadata.version = 4.2;
-        //m.metadata.generator = "RvtVa3c 2015.0.0.0";
-
-        m.ElementId = uidMaterial;
-        m.TypeName = material.Name;
-        m.FloorName = "MeshPhongMaterial";
-        m.CornerCoordinates = Util.ColorToInt( material.Color );
-        m.ambient = m.CornerCoordinates;
-        m.emissive = 0;
-        m.specular = m.CornerCoordinates;
-        m.shininess = 1; // todo: does this need scaling to e.g. [0,100]?
-        m.opacity = 0.01 * (double) ( 100 - material.Transparency ); // Revit has material.Transparency in [0,100], three.js expects opacity in [0.0,1.0]
-        m.transparent = 0 < material.Transparency;
-        m.wireframe = false;
-
-        _materials.Add( uidMaterial, m );
-      }
-      _currentMaterialUid = uidMaterial;
-
-      string uid_per_material = _currentElement.uuid + "-" + uidMaterial;
-
-      if( !_currentObject.ContainsKey( uidMaterial ) )
-      {
-        Debug.Assert( !_currentGeometry.ContainsKey( uidMaterial ), "expected same keys in both" );
-
-        _currentObject.Add( uidMaterial, new AreaContainer.Va3cObject() );
-        CurrentObjectPerMaterial.name = _currentElement.name;
-        CurrentObjectPerMaterial.geometry = uid_per_material;
-        CurrentObjectPerMaterial.material = _currentMaterialUid;
-        CurrentObjectPerMaterial.matrix = new double[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-        CurrentObjectPerMaterial.type = "Mesh";
-        CurrentObjectPerMaterial.uuid = uid_per_material;
-      }
-
-      if( !_currentGeometry.ContainsKey( uidMaterial ) )
-      {
-        _currentGeometry.Add( uidMaterial, new AreaContainer.Va3cGeometry() );
-        CurrentGeometryPerMaterial.uuid = uid_per_material;
-        CurrentGeometryPerMaterial.type = "Geometry";
-        CurrentGeometryPerMaterial.data = new AreaContainer.Va3cGeometryData();
-        CurrentGeometryPerMaterial.data.faces = new List<int>();
-        CurrentGeometryPerMaterial.data.vertices = new List<double>();
-        CurrentGeometryPerMaterial.data.normals = new List<double>();
-        CurrentGeometryPerMaterial.data.uvs = new List<double>();
-        CurrentGeometryPerMaterial.data.visible = true;
-        CurrentGeometryPerMaterial.data.castShadow = true;
-        CurrentGeometryPerMaterial.data.receiveShadow = false;
-        CurrentGeometryPerMaterial.data.doubleSided = true;
-        CurrentGeometryPerMaterial.data.scale = 1.0;
-      }
-
-      if( !_vertices.ContainsKey( uidMaterial ) )
-      {
-        _vertices.Add( uidMaterial, new VertexLookupInt() );
-      }
-    }
-
-    public Va3cExportContext( Document document, string filename )
-    {
-      _doc = document;
-      _filename = filename;
-    }
+    
 
     public bool Start()
     {
-      _materials = new Dictionary<string, AreaContainer.AreaProperties>();
-      _geometries = new Dictionary<string, AreaContainer.Va3cGeometry>();
-      _objects = new Dictionary<string, AreaContainer.Va3cObject>();
+      _areaProperties = new Dictionary<string, AreaContainer.AreaProperties>();
+      //_geometries = new Dictionary<string, AreaContainer.Va3cGeometry>();
+      //  _objects = new Dictionary<string, AreaContainer.Va3cObject>();
 
-      _transformationStack.Push( Transform.Identity );
+      //_transformationStack.Push( Transform.Identity );
 
-      _container = new AreaContainer();
+      //_container = new AreaContainer();
 
-      _container.metadata = new AreaContainer.Metadata();
-      _container.metadata.type = "Object";
-      _container.metadata.version = 4.3;
-      _container.metadata.generator = "RvtVa3c Revit vA3C exporter";
-      _container.geometries = new List<AreaContainer.Va3cGeometry>();
+      //_container.metadata = new AreaContainer.Metadata();
+      //_container.metadata.type = "Object";
+      //_container.metadata.version = 4.3;
+      //_container.metadata.generator = "RvtVa3c Revit vA3C exporter";
+      //_container.geometries = new List<AreaContainer.Va3cGeometry>();
 
-      _container.obj = new AreaContainer.Va3cObject();
-      _container.obj.uuid = _doc.ActiveView.UniqueId;
-      _container.obj.name = "BIM " + _doc.Title;
-      _container.obj.type = "Scene";
+      //_container.obj = new AreaContainer.Va3cObject();
+      //_container.obj.uuid = _doc.ActiveView.UniqueId;
+      //_container.obj.name = "BIM " + _doc.Title;
+      //_container.obj.type = "Scene";
 
       // Scale entire BIM from millimetres to metres.
 
-      _container.obj.matrix = new double[] { 
-        _scale_bim, 0, 0, 0, 
-        0, _scale_bim, 0, 0, 
-        0, 0, _scale_bim, 0, 
-        0, 0, 0, _scale_bim };
+      //_container.obj.matrix = new double[] { 
+      //  _scale_bim, 0, 0, 0, 
+      //  0, _scale_bim, 0, 0, 
+      //  0, 0, _scale_bim, 0, 
+      //  0, 0, 0, _scale_bim };
 
       return true;
     }
@@ -410,11 +422,11 @@ namespace RvtVa3c
     {
       // Finish populating scene
 
-      _container.materials = _materials.Values.ToList();
+      _container.materials = _areaProperties.Values.ToList();
 
-      _container.geometries = _geometries.Values.ToList();
+      //_container.geometries = _geometries.Values.ToList();
 
-      _container.obj.children = _objects.Values.ToList();
+      //_container.obj.children = _objects.Values.ToList();
 
       // Serialise scene
 
@@ -535,33 +547,33 @@ namespace RvtVa3c
 
       IList<XYZ> pts = polymesh.GetPoints();
 
-      Transform t = CurrentTransform;
+     //Transform t = CurrentTransform;
 
-      pts = pts.Select( p => t.OfPoint( p ) ).ToList();
+      //pts = pts.Select( p => t.OfPoint( p ) ).ToList();
 
-      int v1, v2, v3;
+      //int v1, v2, v3;
 
-      foreach( PolymeshFacet facet
-        in polymesh.GetFacets() )
-      {
+      //foreach( PolymeshFacet facet
+      //  in polymesh.GetFacets() )
+      //{
         //Debug.WriteLine( string.Format(
         //  "      {0}: {1} {2} {3}", i++,
         //  facet.V1, facet.V2, facet.V3 ) );
 
-        v1 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
-          pts[facet.V1], _switch_coordinates ) );
+        //v1 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
+        //  pts[facet.V1], _switch_coordinates ) );
 
-        v2 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
-          pts[facet.V2], _switch_coordinates ) );
+        //v2 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
+        //  pts[facet.V2], _switch_coordinates ) );
 
-        v3 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
-          pts[facet.V3], _switch_coordinates ) );
+        //v3 = CurrentVerticesPerMaterial.AddVertex( new PointInt(
+        //  pts[facet.V3], _switch_coordinates ) );
 
-        CurrentGeometryPerMaterial.data.faces.Add( 0 );
-        CurrentGeometryPerMaterial.data.faces.Add( v1 );
-        CurrentGeometryPerMaterial.data.faces.Add( v2 );
-        CurrentGeometryPerMaterial.data.faces.Add( v3 );
-      }
+        //CurrentGeometryPerMaterial.data.faces.Add( 0 );
+        //CurrentGeometryPerMaterial.data.faces.Add( v1 );
+        //CurrentGeometryPerMaterial.data.faces.Add( v2 );
+        //CurrentGeometryPerMaterial.data.faces.Add( v3 );
+     // }
     }
 
     public void OnMaterial( MaterialNode node )
@@ -576,47 +588,35 @@ namespace RvtVa3c
       // only get its attributes when the material 
       // actually changes.
 
-      ElementId id = node.MaterialId;
+      //ElementId id = node.MaterialId;
 
-      if( ElementId.InvalidElementId != id )
-      {
-        Element m = _doc.GetElement( node.MaterialId );
-        SetCurrentMaterial( m.UniqueId );
-      }
-      else
-      {
+      //if( ElementId.InvalidElementId != id )
+      //{
+      //  Element m = _doc.GetElement( node.MaterialId );
+      //  SetCurrentMaterial( m.UniqueId );
+      //}
+      //else
+      //{
         //string uid = Guid.NewGuid().ToString();
 
         // Generate a GUID based on colour, 
         // transparency, etc. to avoid duplicating
         // non-element material definitions.
 
-        int iColor = Util.ColorToInt( node.Color );
+        //int iColor = Util.ColorToInt( node.Color );
 
-        string uid = string.Format( "MaterialNode_{0}_{1}",
-          iColor, Util.RealString( node.Transparency * 100 ) );
+        //string uid = string.Format( "MaterialNode_{0}_{1}",
+        //  iColor, Util.RealString( node.Transparency * 100 ) );
 
-        if( !_materials.ContainsKey( uid ) )
-        {
-          AreaContainer.AreaProperties m
-            = new AreaContainer.AreaProperties();
+        //if( !_areaProperties.ContainsKey( uid ) )
+        //{
+        //  AreaContainer.AreaProperties m
+        //    = new AreaContainer.AreaProperties();
 
-          m.ElementId = uid;
-          m.FloorName = "MeshPhongMaterial";
-          m.CornerCoordinates = iColor;
-          m.ambient = m.CornerCoordinates;
-          m.emissive = 0;
-          m.specular = m.CornerCoordinates;
-          m.shininess = node.Glossiness; // todo: does this need scaling to e.g. [0,100]?
-          m.opacity = 1; // 128 - material.Transparency;
-          m.opacity = 1.0 - node.Transparency; // Revit MaterialNode has double Transparency in ?range?, three.js expects opacity in [0.0,1.0]
-          m.transparent = 0.0 < node.Transparency;
-          m.wireframe = false;
 
-          _materials.Add( uid, m );
-        }
-        SetCurrentMaterial( uid );
-      }
+        //}
+      //  SetCurrentMaterial( uid );
+      //}
     }
 
     public bool IsCanceled()
@@ -669,11 +669,11 @@ namespace RvtVa3c
         "OnElementBegin: id {0} category {1} name {2}",
         elementId.IntegerValue, e.Category.Name, e.Name ) );
 
-      if( _objects.ContainsKey( uid ) )
-      {
-        Debug.WriteLine( "\r\n*** Duplicate element!\r\n" );
-        return RenderNodeAction.Skip;
-      }
+      //if( _objects.ContainsKey( uid ) )
+      //{
+      //  Debug.WriteLine( "\r\n*** Duplicate element!\r\n" );
+      //  return RenderNodeAction.Skip;
+      //}
 
       if( null == e.Category )
       {
@@ -681,7 +681,7 @@ namespace RvtVa3c
         return RenderNodeAction.Skip;
       }
 
-      _elementStack.Push( elementId );
+     // _elementStack.Push( elementId );
 
       ICollection<ElementId> idsMaterialGeometry = e.GetMaterialIds( false );
       ICollection<ElementId> idsMaterialPaint = e.GetMaterialIds( true );
@@ -702,17 +702,17 @@ namespace RvtVa3c
       // multiple current child objects each with a 
       // separate current geometry.
 
-      _currentElement = new AreaContainer.Va3cObject();
+      //_currentElement = new AreaContainer.Va3cObject();
 
-      _currentElement.name = Util.ElementDescription( e );
-      _currentElement.material = _currentMaterialUid;
-      _currentElement.matrix = new double[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-      _currentElement.type = "RevitElement";
-      _currentElement.uuid = uid;
+      //_currentElement.name = Util.ElementDescription( e );
+      //_currentElement.material = _currentMaterialUid;
+      //_currentElement.matrix = new double[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+      //_currentElement.type = "RevitElement";
+      //_currentElement.uuid = uid;
 
-      _currentObject = new Dictionary<string, AreaContainer.Va3cObject>();
-      _currentGeometry = new Dictionary<string, AreaContainer.Va3cGeometry>();
-      _vertices = new Dictionary<string, VertexLookupInt>();
+      //_currentObject = new Dictionary<string, AreaContainer.Va3cObject>();
+      //_currentGeometry = new Dictionary<string, AreaContainer.Va3cGeometry>();
+      //_vertices = new Dictionary<string, VertexLookupInt>();
 
       if( null != e.Category
         && null != e.Category.Material )
@@ -723,8 +723,7 @@ namespace RvtVa3c
       return RenderNodeAction.Proceed;
     }
 
-    public void OnElementEnd(
-      ElementId id )
+    public void OnElementEnd( ElementId id )
     {
       // Note: this method is invoked even for 
       // elements that were skipped.
@@ -736,52 +735,52 @@ namespace RvtVa3c
         "OnElementEnd: id {0} category {1} name {2}",
         id.IntegerValue, e.Category.Name, e.Name ) );
 
-      if( _objects.ContainsKey( uid ) )
-      {
-        Debug.WriteLine( "\r\n*** Duplicate element!\r\n" );
-        return;
-      }
+      //if( _objects.ContainsKey( uid ) )
+      //{
+      //  Debug.WriteLine( "\r\n*** Duplicate element!\r\n" );
+      //  return;
+      //}
 
-      if( null == e.Category )
-      {
-        Debug.WriteLine( "\r\n*** Non-category element!\r\n" );
-        return;
-      }
+      //if( null == e.Category )
+      //{
+      //  Debug.WriteLine( "\r\n*** Non-category element!\r\n" );
+      //  return;
+      //}
 
-      List<string> materials = _vertices.Keys.ToList();
+      //List<string> materials = _vertices.Keys.ToList();
 
-      int n = materials.Count;
+      //int n = materials.Count;
 
-      _currentElement.children = new List<AreaContainer.Va3cObject>( n );
+      //_currentElement.children = new List<AreaContainer.Va3cObject>( n );
 
-      foreach( string material in materials )
-      {
-        AreaContainer.Va3cObject obj = _currentObject[material];
-        AreaContainer.Va3cGeometry geo = _currentGeometry[material];
+      //foreach( string material in materials )
+      //{
+        //AreaContainer.Va3cObject obj = _currentObject[material];
+        //AreaContainer.Va3cGeometry geo = _currentGeometry[material];
 
-        foreach( KeyValuePair<PointInt, int> p in _vertices[material] )
-        {
-          geo.data.vertices.Add( _scale_vertex * p.Key.X );
-          geo.data.vertices.Add( _scale_vertex * p.Key.Y );
-          geo.data.vertices.Add( _scale_vertex * p.Key.Z );
-        }
-        obj.geometry = geo.uuid;
-        _geometries.Add( geo.uuid, geo );
-        _currentElement.children.Add( obj );
-      }
+        //foreach( KeyValuePair<PointInt, int> p in _vertices[material] )
+        //{
+        //  geo.data.vertices.Add( _scale_vertex * p.Key.X );
+        //  geo.data.vertices.Add( _scale_vertex * p.Key.Y );
+        //  geo.data.vertices.Add( _scale_vertex * p.Key.Z );
+        //}
+        //obj.geometry = geo.uuid;
+        //_geometries.Add( geo.uuid, geo );
+        //_currentElement.children.Add( obj );
+      //}
 
       Dictionary<string, string> d
         = Util.GetElementProperties( e, true );
 
-      _currentElement.userData = d;
+      //_currentElement.userData = d;
 
       // Add Revit element unique id to user data dict.
 
-      _currentElement.userData.Add( "revit_id", uid );
+      //_currentElement.userData.Add( "revit_id", uid );
 
-      _objects.Add( _currentElement.uuid, _currentElement );
+      //_objects.Add( _currentElement.uuid, _currentElement );
 
-      _elementStack.Pop();
+      //_elementStack.Pop();
     }
 
     public RenderNodeAction OnFaceBegin( FaceNode node )
@@ -799,11 +798,8 @@ namespace RvtVa3c
     {
       // This method is invoked only if the 
       // custom exporter was set to include faces.
-
       //Debug.Assert( false, "we set exporter.IncludeFaces false" ); // removed in Revit 2017
-
       Debug.WriteLine( "  OnFaceEnd: " + node.NodeName );
-
       // Note: This method is invoked even for faces that were skipped.
     }
 
@@ -811,12 +807,9 @@ namespace RvtVa3c
     {
       Debug.WriteLine( "  OnInstanceBegin: " + node.NodeName 
         + " symbol: " + node.GetSymbolId().IntegerValue );
-
       // This method marks the start of processing a family instance
-
-      _transformationStack.Push( CurrentTransform.Multiply( 
-        node.GetTransform() ) );
-
+      //_transformationStack.Push( CurrentTransform.Multiply( 
+        //node.GetTransform() ) );
       // We can either skip this instance or proceed with rendering it.
       return RenderNodeAction.Proceed;
     }
@@ -825,13 +818,13 @@ namespace RvtVa3c
     {
       Debug.WriteLine( "  OnInstanceEnd: " + node.NodeName );
       // Note: This method is invoked even for instances that were skipped.
-      _transformationStack.Pop();
+     //_transformationStack.Pop();
     }
 
     public RenderNodeAction OnLinkBegin( LinkNode node )
     {
       Debug.WriteLine( "  OnLinkBegin: " + node.NodeName + " Document: " + node.GetDocument().Title + ": Id: " + node.GetSymbolId().IntegerValue );
-      _transformationStack.Push( CurrentTransform.Multiply( node.GetTransform() ) );
+      //_transformationStack.Push( CurrentTransform.Multiply( node.GetTransform() ) );
       return RenderNodeAction.Proceed;
     }
 
@@ -839,7 +832,7 @@ namespace RvtVa3c
     {
       Debug.WriteLine( "  OnLinkEnd: " + node.NodeName );
       // Note: This method is invoked even for instances that were skipped.
-      _transformationStack.Pop();
+      //_transformationStack.Pop();
     }
 
     public void OnLight( LightNode node )

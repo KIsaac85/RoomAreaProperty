@@ -7,7 +7,7 @@ using Autodesk.Revit.DB;
 using WinForms = System.Windows.Forms;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreas
 {
   class Util
   {

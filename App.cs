@@ -8,7 +8,7 @@ using Autodesk.Revit.UI;
 using System.Reflection;
 #endregion
 
-namespace RvtVa3c
+namespace RoomAreas
 {
   class App : IExternalApplication
   {
@@ -22,11 +22,10 @@ namespace RvtVa3c
         .Location;
 
       RibbonItemData i1 = new PushButtonData(
-          "RvtVa3c_Command", "vA3C \r\n Export",
-          path, "RvtVa3c.Command" );
+          "Room_Area_Property_Command", "Room Areas \r\n Properties",
+          path, "RoomAreasCommand");
 
-      i1.ToolTip = "Export three.js JSON objects "
-        + "for vA3C AEC viewer";
+      i1.ToolTip = "Export Area Properties to JSON File";
 
       //p.AddStackedItems( i1, i2, i3 );
 
@@ -37,7 +36,7 @@ namespace RvtVa3c
     {
       PopulatePanel(
         a.CreateRibbonPanel(
-          "vA3C Export" ) );
+          "Area Property Export" ) );
 
       return Result.Succeeded;
     }

@@ -10,7 +10,7 @@ using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreas
 {
     [Transaction( TransactionMode.Manual )]
   public class Command : IExternalCommand
@@ -22,9 +22,7 @@ namespace RvtVa3c
     /// directory.
     /// </summary>
     System.Reflection.Assembly
-      CurrentDomain_AssemblyResolve(
-        object sender,
-        ResolveEventArgs args )
+      CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args )
     {
       if( args.Name.Contains( "Newtonsoft" ) )
       {
@@ -48,6 +46,8 @@ namespace RvtVa3c
     /// Export a given 3D view to JSON using
     /// our custom exporter context.
     /// </summary>
+    /// 
+
     public void ExportView3D( View3D view3d, string filename )
     {
       AppDomain.CurrentDomain.AssemblyResolve

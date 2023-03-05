@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreas
 {
   /// <summary>
   /// three.js scene class

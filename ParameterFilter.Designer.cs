@@ -1,4 +1,4 @@
-﻿namespace RvtVa3c
+﻿namespace RoomAreas
 {
     partial class ParameterFilter
     {
