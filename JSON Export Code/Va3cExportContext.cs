@@ -231,18 +231,25 @@ namespace RvtVa3c
     #endregion // VertexLookupInt
 
     Document _doc;
-    string _filename;
-    Va3cContainer _container;
-    Dictionary<string, Va3cContainer.Va3cMaterial> _materials;
-    Dictionary<string, Va3cContainer.Va3cObject> _objects;
-    Dictionary<string, Va3cContainer.Va3cGeometry> _geometries;
+        //Filters of Areas
+        FilteredElementCollector collector = new FilteredElementCollector(_doc);
+        ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
 
-    Va3cContainer.Va3cObject _currentElement;
+
+
+
+        string _filename;
+    AreaContainer _container;
+    Dictionary<string, AreaContainer.AreaProperties> _materials;
+    Dictionary<string, AreaContainer.Va3cObject> _objects;
+    Dictionary<string, AreaContainer.Va3cGeometry> _geometries;
+
+    AreaContainer.Va3cObject _currentElement;
 
     // Keyed on material uid to handle several materials per element:
 
-    Dictionary<string, Va3cContainer.Va3cObject> _currentObject;
-    Dictionary<string, Va3cContainer.Va3cGeometry> _currentGeometry;
+    Dictionary<string, AreaContainer.Va3cObject> _currentObject;
+    Dictionary<string, AreaContainer.Va3cGeometry> _currentGeometry;
     Dictionary<string, VertexLookupInt> _vertices;
 
     Stack<ElementId> _elementStack = new Stack<ElementId>();
@@ -252,7 +259,7 @@ namespace RvtVa3c
 
     public string myjs = null;
 
-    Va3cContainer.Va3cObject CurrentObjectPerMaterial
+    AreaContainer.Va3cObject CurrentObjectPerMaterial
     {
       get
       {
@@ -260,7 +267,7 @@ namespace RvtVa3c
       }
     }
 
-    Va3cContainer.Va3cGeometry CurrentGeometryPerMaterial
+    AreaContainer.Va3cGeometry CurrentGeometryPerMaterial
     {
       get
       {
@@ -299,21 +306,21 @@ namespace RvtVa3c
         Material material = _doc.GetElement(
           uidMaterial ) as Material;
 
-        Va3cContainer.Va3cMaterial m
-          = new Va3cContainer.Va3cMaterial();
+        AreaContainer.AreaProperties m
+          = new AreaContainer.AreaProperties();
 
         //m.metadata = new Va3cContainer.Va3cMaterialMetadata();
         //m.metadata.type = "material";
         //m.metadata.version = 4.2;
         //m.metadata.generator = "RvtVa3c 2015.0.0.0";
 
-        m.uuid = uidMaterial;
-        m.name = material.Name;
-        m.type = "MeshPhongMaterial";
-        m.color = Util.ColorToInt( material.Color );
-        m.ambient = m.color;
+        m.ElementId = uidMaterial;
+        m.TypeName = material.Name;
+        m.FloorName = "MeshPhongMaterial";
+        m.CornerCoordinates = Util.ColorToInt( material.Color );
+        m.ambient = m.CornerCoordinates;
         m.emissive = 0;
-        m.specular = m.color;
+        m.specular = m.CornerCoordinates;
         m.shininess = 1; // todo: does this need scaling to e.g. [0,100]?
         m.opacity = 0.01 * (double) ( 100 - material.Transparency ); // Revit has material.Transparency in [0,100], three.js expects opacity in [0.0,1.0]
         m.transparent = 0 < material.Transparency;
@@ -329,7 +336,7 @@ namespace RvtVa3c
       {
         Debug.Assert( !_currentGeometry.ContainsKey( uidMaterial ), "expected same keys in both" );
 
-        _currentObject.Add( uidMaterial, new Va3cContainer.Va3cObject() );
+        _currentObject.Add( uidMaterial, new AreaContainer.Va3cObject() );
         CurrentObjectPerMaterial.name = _currentElement.name;
         CurrentObjectPerMaterial.geometry = uid_per_material;
         CurrentObjectPerMaterial.material = _currentMaterialUid;
@@ -340,10 +347,10 @@ namespace RvtVa3c
 
       if( !_currentGeometry.ContainsKey( uidMaterial ) )
       {
-        _currentGeometry.Add( uidMaterial, new Va3cContainer.Va3cGeometry() );
+        _currentGeometry.Add( uidMaterial, new AreaContainer.Va3cGeometry() );
         CurrentGeometryPerMaterial.uuid = uid_per_material;
         CurrentGeometryPerMaterial.type = "Geometry";
-        CurrentGeometryPerMaterial.data = new Va3cContainer.Va3cGeometryData();
+        CurrentGeometryPerMaterial.data = new AreaContainer.Va3cGeometryData();
         CurrentGeometryPerMaterial.data.faces = new List<int>();
         CurrentGeometryPerMaterial.data.vertices = new List<double>();
         CurrentGeometryPerMaterial.data.normals = new List<double>();
@@ -369,21 +376,21 @@ namespace RvtVa3c
 
     public bool Start()
     {
-      _materials = new Dictionary<string, Va3cContainer.Va3cMaterial>();
-      _geometries = new Dictionary<string, Va3cContainer.Va3cGeometry>();
-      _objects = new Dictionary<string, Va3cContainer.Va3cObject>();
+      _materials = new Dictionary<string, AreaContainer.AreaProperties>();
+      _geometries = new Dictionary<string, AreaContainer.Va3cGeometry>();
+      _objects = new Dictionary<string, AreaContainer.Va3cObject>();
 
       _transformationStack.Push( Transform.Identity );
 
-      _container = new Va3cContainer();
+      _container = new AreaContainer();
 
-      _container.metadata = new Va3cContainer.Metadata();
+      _container.metadata = new AreaContainer.Metadata();
       _container.metadata.type = "Object";
       _container.metadata.version = 4.3;
       _container.metadata.generator = "RvtVa3c Revit vA3C exporter";
-      _container.geometries = new List<Va3cContainer.Va3cGeometry>();
+      _container.geometries = new List<AreaContainer.Va3cGeometry>();
 
-      _container.obj = new Va3cContainer.Va3cObject();
+      _container.obj = new AreaContainer.Va3cObject();
       _container.obj.uuid = _doc.ActiveView.UniqueId;
       _container.obj.name = "BIM " + _doc.Title;
       _container.obj.type = "Scene";
@@ -591,15 +598,15 @@ namespace RvtVa3c
 
         if( !_materials.ContainsKey( uid ) )
         {
-          Va3cContainer.Va3cMaterial m
-            = new Va3cContainer.Va3cMaterial();
+          AreaContainer.AreaProperties m
+            = new AreaContainer.AreaProperties();
 
-          m.uuid = uid;
-          m.type = "MeshPhongMaterial";
-          m.color = iColor;
-          m.ambient = m.color;
+          m.ElementId = uid;
+          m.FloorName = "MeshPhongMaterial";
+          m.CornerCoordinates = iColor;
+          m.ambient = m.CornerCoordinates;
           m.emissive = 0;
-          m.specular = m.color;
+          m.specular = m.CornerCoordinates;
           m.shininess = node.Glossiness; // todo: does this need scaling to e.g. [0,100]?
           m.opacity = 1; // 128 - material.Transparency;
           m.opacity = 1.0 - node.Transparency; // Revit MaterialNode has double Transparency in ?range?, three.js expects opacity in [0.0,1.0]
@@ -695,7 +702,7 @@ namespace RvtVa3c
       // multiple current child objects each with a 
       // separate current geometry.
 
-      _currentElement = new Va3cContainer.Va3cObject();
+      _currentElement = new AreaContainer.Va3cObject();
 
       _currentElement.name = Util.ElementDescription( e );
       _currentElement.material = _currentMaterialUid;
@@ -703,8 +710,8 @@ namespace RvtVa3c
       _currentElement.type = "RevitElement";
       _currentElement.uuid = uid;
 
-      _currentObject = new Dictionary<string, Va3cContainer.Va3cObject>();
-      _currentGeometry = new Dictionary<string, Va3cContainer.Va3cGeometry>();
+      _currentObject = new Dictionary<string, AreaContainer.Va3cObject>();
+      _currentGeometry = new Dictionary<string, AreaContainer.Va3cGeometry>();
       _vertices = new Dictionary<string, VertexLookupInt>();
 
       if( null != e.Category
@@ -745,12 +752,12 @@ namespace RvtVa3c
 
       int n = materials.Count;
 
-      _currentElement.children = new List<Va3cContainer.Va3cObject>( n );
+      _currentElement.children = new List<AreaContainer.Va3cObject>( n );
 
       foreach( string material in materials )
       {
-        Va3cContainer.Va3cObject obj = _currentObject[material];
-        Va3cContainer.Va3cGeometry geo = _currentGeometry[material];
+        AreaContainer.Va3cObject obj = _currentObject[material];
+        AreaContainer.Va3cGeometry geo = _currentGeometry[material];
 
         foreach( KeyValuePair<PointInt, int> p in _vertices[material] )
         {

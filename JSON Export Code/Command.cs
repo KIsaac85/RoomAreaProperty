@@ -48,9 +48,7 @@ namespace RvtVa3c
     /// Export a given 3D view to JSON using
     /// our custom exporter context.
     /// </summary>
-    public void ExportView3D( 
-      View3D view3d, 
-      string filename )
+    public void ExportView3D( View3D view3d, string filename )
     {
       AppDomain.CurrentDomain.AssemblyResolve
         += CurrentDomain_AssemblyResolve;

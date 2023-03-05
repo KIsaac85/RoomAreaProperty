@@ -19,10 +19,8 @@ namespace RvtVa3c
     public static void ErrorMsg( string msg )
     {
       Debug.WriteLine( msg );
-      WinForms.MessageBox.Show( msg,
-        _caption,
-        WinForms.MessageBoxButtons.OK,
-        WinForms.MessageBoxIcon.Error );
+      WinForms.MessageBox.Show( msg,_caption,
+        WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Error );
     }
 
     /// <summary>

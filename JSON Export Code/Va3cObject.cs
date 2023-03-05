@@ -1,4 +1,5 @@
 ﻿#region Namespaces
+using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -13,37 +14,42 @@ namespace RvtVa3c
   /// by the three.js and vA3C editors.
   /// </summary>
   [DataContract]
-  public class Va3cContainer
+  public class AreaContainer
   {
     /// <summary>
     /// Based on MeshPhongMaterial obtained by 
     /// exporting a cube from the three.js editor.
     /// </summary>
-    public class Va3cMaterial
+    public class AreaProperties
     {
       [DataMember]
-      public string uuid { get; set; }
+      public string ElementId { get; set; }
       [DataMember]
-      public string name { get; set; }
+      public string TypeName { get; set; }
       [DataMember]
-      public string type { get; set; } // MeshPhongMaterial
+      public string FloorName { get; set; } 
       [DataMember]
-      public int color { get; set; } // 16777215
-      [DataMember]
-      public int ambient { get; set; } //16777215
-      [DataMember]
-      public int emissive { get; set; } // 1
-      [DataMember]
-      public int specular { get; set; } //1118481
-      [DataMember]
-      public int shininess { get; set; } // 30
-      [DataMember]
-      public double opacity { get; set; } // 1
-      [DataMember]
-      public bool transparent { get; set; } // false
-      [DataMember]
-      public bool wireframe { get; set; } // false
-    }
+      public XYZ CornerCoordinates { get; set; }
+
+
+
+            #region To be deleted
+            [DataMember]
+            public int ambient { get; set; } //16777215
+            [DataMember]
+            public int emissive { get; set; } // 1
+            [DataMember]
+            public int specular { get; set; } //1118481
+            [DataMember]
+            public int shininess { get; set; } // 30
+            [DataMember]
+            public double opacity { get; set; } // 1
+            [DataMember]
+            public bool transparent { get; set; } // false
+            [DataMember]
+            public bool wireframe { get; set; } // false 
+            #endregion
+        }
 
     [DataContract]
     public class Va3cGeometryData
@@ -92,7 +98,7 @@ namespace RvtVa3c
       public Va3cGeometryData data { get; set; }
       //[DataMember] public double scale { get; set; }
       [DataMember]
-      public List<Va3cMaterial> materials { get; set; }
+      public List<AreaProperties> materials { get; set; }
     }
 
     [DataContract]
@@ -155,6 +161,6 @@ namespace RvtVa3c
     [DataMember]
     public List<Va3cGeometry> geometries;
     [DataMember]
-    public List<Va3cMaterial> materials;
+    public List<AreaProperties> materials;
   }
 }
