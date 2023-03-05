@@ -12,7 +12,7 @@ using DialogResult = System.Windows.Forms.DialogResult;
 
 namespace RvtVa3c
 {
-    [Transaction( TransactionMode.Manual )]
+    [Transaction( TransactionMode.ReadOnly )]
   public class Command : IExternalCommand
   {
     /// <summary>
@@ -55,11 +55,11 @@ namespace RvtVa3c
 
       Document doc = view3d.Document;
 
-      Va3cExportContext context
-        = new Va3cExportContext( doc, filename );
+      //Va3cExportContext context
+      //  = new Va3cExportContext( doc, filename );
 
-      CustomExporter exporter = new CustomExporter(
-        doc, context );
+      //CustomExporter exporter = new CustomExporter(
+      //  doc, context );
 
       // Note: Excluding faces just suppresses the 
       // OnFaceBegin calls, not the actual processing 
@@ -68,9 +68,9 @@ namespace RvtVa3c
       //
       //exporter.IncludeFaces = false; // removed in Revit 2017
 
-      exporter.ShouldStopOnError = false;
+      //exporter.ShouldStopOnError = false;
 
-      exporter.Export( view3d );
+      //exporter.Export( view3d );
     }
 
     #region UI to Filter Parameters

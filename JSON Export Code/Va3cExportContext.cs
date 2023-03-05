@@ -24,9 +24,10 @@ namespace RvtVa3c
   // Todo:
   // Check for file size
   // Instance/type reuse
-
+  /*
   public class Va3cExportContext : IExportContext
   {
+        
     /// <summary>
     /// Scale entire top level BIM object node in JSON
     /// output. A scale of 1.0 will output the model in 
@@ -848,5 +849,5 @@ namespace RvtVa3c
       //Asset asset = node.GetAsset();
       //Debug.WriteLine( "OnLight: Asset:" + ( ( asset != null ) ? asset.Name : "Null" ) );
     }
-  }
+  }*/
 }

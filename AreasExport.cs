@@ -5,6 +5,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using System.IO;
 using Autodesk.Revit.Attributes;
+using Newtonsoft.Json;
 
 namespace RoomAreaProperty
 {
@@ -18,9 +19,9 @@ namespace RoomAreaProperty
 
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-
+            string myjs = null;
             //Filters of Areas
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
+               FilteredElementCollector collector = new FilteredElementCollector(doc);
             ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
 
             //To convert from internal units to the format units
@@ -56,8 +57,25 @@ namespace RoomAreaProperty
                     }
                 }
             }
+
+
+            JsonSerializerSettings settings
+        = new JsonSerializerSettings();
+
+            settings.NullValueHandling
+              = NullValueHandling.Ignore;
+
+            Formatting formatting
+              = RvtVa3c.UserSettings.JsonIndented
+                ? Formatting.Indented
+                : Formatting.None;
+
+            myjs = JsonConvert.SerializeObject(
+              sb, formatting, settings);
+
+            File.WriteAllText(@"D:\Areas Properties.js", myjs);
             //Save data in a text file
-            File.WriteAllText(@"D:\Areas Properties.txt", sb.ToString());
+            //File.WriteAllText(@"D:\Areas Properties.txt", sb.ToString());
             TaskDialog.Show("Areas", sb.ToString());
         
             return Result.Succeeded;
