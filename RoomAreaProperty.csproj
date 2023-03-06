@@ -62,7 +62,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AreaObject.cs" />
     <Compile Include="AreasExport.cs" />
+    <Compile Include="Filters.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

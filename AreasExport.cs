@@ -19,15 +19,15 @@ namespace RoomAreaProperty
 
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-            string myjs = null;
-            //Filters of Areas
-               FilteredElementCollector collector = new FilteredElementCollector(doc);
-            ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
+            string myjs ;
+
 
             //To convert from internal units to the format units
             FormatOptions areaFormatOptions = doc.GetUnits().GetFormatOptions(SpecTypeId.Area);
             ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
-            IList<Element> AreaElements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+            Filters flt = new Filters(doc);
+            IList<Element> AreaElements = Filters.elementsReferecne();
 
             //String builder to save data
             StringBuilder sb = new StringBuilder();
@@ -61,16 +61,12 @@ namespace RoomAreaProperty
 
             JsonSerializerSettings settings = new JsonSerializerSettings();
 
-            settings.NullValueHandling
-              = NullValueHandling.Ignore;
+            settings.NullValueHandling = NullValueHandling.Ignore;
 
-            Formatting formatting
-              = RoomAreaProperty.UserSettings.JsonIndented
-                ? Formatting.Indented
-                : Formatting.None;
+            Formatting formatting = RoomAreaProperty
+                .UserSettings.JsonIndented ? Formatting.Indented: Formatting.None;
 
-            myjs = JsonConvert.SerializeObject(
-              sb, formatting, settings);
+            myjs = JsonConvert.SerializeObject(sb, formatting, settings);
 
             File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
 
