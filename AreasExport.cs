@@ -59,23 +59,21 @@ namespace RoomAreaProperty
             }
 
 
-            JsonSerializerSettings settings
-        = new JsonSerializerSettings();
+            JsonSerializerSettings settings = new JsonSerializerSettings();
 
             settings.NullValueHandling
               = NullValueHandling.Ignore;
 
             Formatting formatting
-              = RvtVa3c.UserSettings.JsonIndented
+              = RoomAreaProperty.UserSettings.JsonIndented
                 ? Formatting.Indented
                 : Formatting.None;
 
             myjs = JsonConvert.SerializeObject(
               sb, formatting, settings);
 
-            File.WriteAllText(@"D:\Areas Properties.js", myjs);
-            //Save data in a text file
-            //File.WriteAllText(@"D:\Areas Properties.txt", sb.ToString());
+            File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
+
             TaskDialog.Show("Areas", sb.ToString());
         
             return Result.Succeeded;
