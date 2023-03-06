@@ -27,37 +27,11 @@ namespace RoomAreaProperty
             ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
 
             Filters flt = new Filters(doc);
-            IList<Element> AreaElements = Filters.elementsReferecne();
-
-            //String builder to save data
-            StringBuilder sb = new StringBuilder();
-            if (AreaElements.Count!=0)
-            {
-                
-                foreach (Element _element in AreaElements)
-                {
-                    Options _options = new Options();
-                    Area _area = _element as Area;
-                    SpatialElementBoundaryOptions spOPT = new SpatialElementBoundaryOptions();
-
-                    //The forloop is created to retrieve the boundry lines start and end points.
-                    foreach (var boundarySegments in _area.GetBoundarySegments(spOPT))
-                    {
-                        foreach (var item in boundarySegments)
-                        {
-                            Curve curv = item.GetCurve();
-                            //All properties were retrieved from element and areas except
-                            // the start and endpoint of curves
-                            sb.AppendLine("Element ID: " + _element.Id.ToString() +
-                                "Area (m2): " + Math.Round(UnitUtils.ConvertFromInternalUnits(_area.Area, areaUnit), 2).ToString() +
-                              "  Floor #:" + _area.Level.Name +
-                              "  Type: " + _area.Name +
-                              "  Coordinates: ( " + curv.GetEndPoint(0).ToString() + "," + curv.GetEndPoint(1).ToString() + ")");
-                        }
-                    }
-                }
-            }
-
+            List<Element> AreaElements = new List<Element>();
+            AreaElements.AddRange(Filters.elementsReferecne());
+            DataRetrieval dt = new DataRetrieval(AreaElements);
+            List<AreaObject> areaobjectlist = new List<AreaObject>();
+            areaobjectlist.AddRange(dt.data());
 
             JsonSerializerSettings settings = new JsonSerializerSettings();
 
@@ -66,11 +40,11 @@ namespace RoomAreaProperty
             Formatting formatting = RoomAreaProperty
                 .UserSettings.JsonIndented ? Formatting.Indented: Formatting.None;
 
-            myjs = JsonConvert.SerializeObject(sb, formatting, settings);
+            myjs = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
 
             File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
 
-            TaskDialog.Show("Areas", sb.ToString());
+            
         
             return Result.Succeeded;
         }
