@@ -13,7 +13,31 @@ namespace RoomAreaProperty
     {
         public void ExportToDwg(UIDocument uidoc)
         {
+
+			
 			Document doc = uidoc.Document;
+
+			FilteredElementCollector collector = new FilteredElementCollector(doc);
+			//Create Filter
+			ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Views);
+			StringBuilder sb = new StringBuilder();
+			IList<Element> elements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+			foreach (var element in elements)
+			{
+                Autodesk.Revit.DB.View v = element as Autodesk.Revit.DB.View;
+
+				switch (v.ViewType)
+				{
+					case ViewType.AreaPlan:
+						sb.AppendLine(v.Name + " is " + v.ViewType.ToString());
+						break;
+					default:
+						break;
+
+
+				}
+			}
+			TaskDialog.Show("Revit", sb.ToString());
 			using (Transaction tx = new Transaction(doc))
 			{
 				tx.Start("Export");
