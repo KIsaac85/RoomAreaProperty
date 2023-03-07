@@ -34,17 +34,19 @@ namespace RoomAreaProperty
             List<AreaObject> areaobjectlist = new List<AreaObject>();
             areaobjectlist.AddRange(dt.data());
 
-            JsonSerializerSettings settings = new JsonSerializerSettings();
+            //JsonSerializerSettings settings = new JsonSerializerSettings();
 
-            settings.NullValueHandling = NullValueHandling.Ignore;
+            //settings.NullValueHandling = NullValueHandling.Ignore;
 
-            Formatting formatting = RoomAreaProperty
-                .UserSettings.JsonIndented ? Formatting.Indented: Formatting.None;
+            //Formatting formatting = RoomAreaProperty
+            //    .UserSettings.JsonIndented ? Formatting.Indented: Formatting.None;
 
-            myjs = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
+            //myjs = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
 
-            File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
+            //File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
+            DrawingsExportClass dwgex = new DrawingsExportClass();
 
+            dwgex.ExportToDwg(uidoc);
             
 
 

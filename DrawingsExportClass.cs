@@ -20,16 +20,45 @@ namespace RoomAreaProperty
 			FilteredElementCollector collector = new FilteredElementCollector(doc);
 			//Create Filter
 			ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Views);
-			StringBuilder sb = new StringBuilder();
+			
 			IList<Element> elements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+			List<ElementId> selectids = new List<ElementId>();
+			
 			foreach (var element in elements)
 			{
                 Autodesk.Revit.DB.View v = element as Autodesk.Revit.DB.View;
-
+				
+				if(v.CanBePrinted)
+				selectids.Add(v.Id);
 				switch (v.ViewType)
 				{
 					case ViewType.AreaPlan:
-						sb.AppendLine(v.Name + " is " + v.ViewType.ToString());
+						using (Transaction tx = new Transaction(doc))
+						{
+							tx.Start("Export");
+							
+							foreach (ElementId e in selectids)
+							{
+								DWGExportOptions options = new DWGExportOptions();
+								ExportDWGSettings dwgSettings = ExportDWGSettings
+									.Create(doc, "filexport");
+								options = dwgSettings.GetDWGExportOptions();
+
+								options.Colors = ExportColorMode.TrueColorPerView;
+								options.FileVersion = ACADVersion.R2013;
+								options.MergedViews = true;
+
+
+
+
+
+								doc.Export("G:\\FreeLancing\\Fievr",
+							v.Name, selectids, options);
+								ElementId dwgsetid = dwgSettings.Id;
+								doc.Delete(dwgsetid);
+							}
+							tx.Commit();
+						}
 						break;
 					default:
 						break;
@@ -37,35 +66,8 @@ namespace RoomAreaProperty
 
 				}
 			}
-			TaskDialog.Show("Revit", sb.ToString());
-			using (Transaction tx = new Transaction(doc))
-			{
-				tx.Start("Export");
-				ICollection<ElementId> selectids = uidoc.Selection.GetElementIds();
-				foreach (ElementId e in selectids)
-				{
-					DWGExportOptions options = new DWGExportOptions();
-					ExportDWGSettings dwgSettings = ExportDWGSettings
-						.Create(doc, "filexport");
-					options = dwgSettings.GetDWGExportOptions();
-
-					options.Colors = ExportColorMode.TrueColorPerView;
-					options.FileVersion = ACADVersion.R2013;
-					options.MergedViews = true;
-
-					Element f = doc.GetElement(e);
-					ElementType ftype = doc.GetElement(f.GetTypeId()) as ElementType;
-					List<ElementId> icollection = new List<ElementId>();
-
-					icollection.Add(e);
-
-					doc.Export("G:\\FreeLancing\\Fievr",
-				ftype.FamilyName + " " + f.Name, icollection, options);
-					ElementId dwgsetid = dwgSettings.Id;
-					doc.Delete(dwgsetid);
-				}
-				tx.Commit();
-			}
+			
+			
 
 		}
     }
