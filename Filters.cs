@@ -11,20 +11,31 @@ namespace RoomAreaProperty
     {
         private static FilteredElementCollector collector { get; set; }
 
-        private static ElementCategoryFilter filter { get; set; }
-
+        private static ElementCategoryFilter AreaFilter { get; set; }
+        private static ElementCategoryFilter ViewsFilter { get; set; }
         private static IList<Element> AreaElements { get; set; }
+        private static IList<Element> ViewsElements { get; set; }
         public Filters(Document doc)
         {
             collector = new FilteredElementCollector(doc);
-            filter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
+            AreaFilter = new ElementCategoryFilter(BuiltInCategory.OST_Areas);
+            ViewsFilter = new ElementCategoryFilter(BuiltInCategory.OST_Views);
             AreaElements = new List<Element>();
+            ViewsElements = new List<Element>();
+
         }
-        public static IList<Element> elementsReferecne()
+        public static IList<Element> elementsAreaReferecne()
         {
-            AreaElements = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+            AreaElements = collector.WherePasses(AreaFilter).WhereElementIsNotElementType().ToElements();
 
             return AreaElements;
+        }
+        public static IList<Element> elementsViewReferecne()
+        {
+            
+            ViewsElements = collector.WherePasses(ViewsFilter).WhereElementIsNotElementType().ToElements();
+
+            return ViewsElements;
         }
     }
 }

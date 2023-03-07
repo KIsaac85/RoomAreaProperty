@@ -28,11 +28,11 @@ namespace RoomAreaProperty
             ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
 
             Filters flt = new Filters(doc);
-            List<Element> AreaElements = new List<Element>();
-            AreaElements.AddRange(Filters.elementsReferecne());
-            DataRetrieval dt = new DataRetrieval(AreaElements);
-            List<AreaObject> areaobjectlist = new List<AreaObject>();
-            areaobjectlist.AddRange(dt.data());
+            //List<Element> AreaElements = new List<Element>();
+            //AreaElements.AddRange(Filters.elementsAreaReferecne());
+            //DataRetrieval dt = new DataRetrieval(AreaElements);
+            //List<AreaObject> areaobjectlist = new List<AreaObject>();
+            //areaobjectlist.AddRange(dt.data());
 
             //JsonSerializerSettings settings = new JsonSerializerSettings();
 
@@ -46,7 +46,7 @@ namespace RoomAreaProperty
             //File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
             DrawingsExportClass dwgex = new DrawingsExportClass();
 
-            dwgex.ExportToDwg(uidoc);
+            dwgex.ExportToDwg(doc,Filters.elementsViewReferecne());
             
 
 
