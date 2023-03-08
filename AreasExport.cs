@@ -45,9 +45,9 @@ namespace RoomAreaProperty
 
             //File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
             DrawingsExportClass dwgex = new DrawingsExportClass();
-
+            DXFExportClass dxf = new DXFExportClass();
             dwgex.ExportToDwg(doc,Filters.elementsViewReferecne());
-            
+            dxf.ExportToDXF(doc, Filters.elementsViewReferecne());
 
 
             return Result.Succeeded;
