@@ -62,34 +62,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AreaObject.cs" />
     <Compile Include="AreasExport.cs" />
-    <Compile Include="JSON Export Code\App.cs" />
-    <Compile Include="JSON Export Code\Command.cs" />
-    <Compile Include="JSON Export Code\ParameterFilter.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="JSON Export Code\ParameterFilter.Designer.cs">
-      <DependentUpon>ParameterFilter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JSON Export Code\UserSettings.cs" />
-    <Compile Include="JSON Export Code\Util.cs" />
-    <Compile Include="JSON Export Code\Va3cExportContext.cs" />
-    <Compile Include="JSON Export Code\Va3cObject.cs" />
-    <Compile Include="JSON Export Code\Va3cScene.cs" />
+    <Compile Include="DataRetrieval.cs" />
+    <Compile Include="DrawingsExportClass.cs" />
+    <Compile Include="DXFExportClass.cs" />
+    <Compile Include="Filters.cs" />
+    <Compile Include="UserSettings.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AreasPropereties.addin" />
-    <None Include="JSON Export Code\packages.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="JSON Export Code\ParameterFilter.resx">
-      <DependentUpon>ParameterFilter.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
