@@ -5,6 +5,12 @@ using System.Runtime.Serialization;
 
 namespace RoomAreaProperty
 {
+    /// <summary>
+    /// Area Object
+    /// Each area object has an ID, area value, 
+    /// a level and a list of lines
+    /// a line is an object which has a start and end points
+    /// </summary>
     [DataContract]
     public class AreaObject
     {
@@ -25,6 +31,9 @@ namespace RoomAreaProperty
             [DataMember]
             public XYZ endpoint { get; set; }
         }
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public AreaObject()
         {
 

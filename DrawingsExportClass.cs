@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace RoomAreaProperty
 {
+    /// <summary>
+    /// A class to create drawings 
+    /// from area plans
+    /// </summary>
     class DrawingsExportClass 
     {
         public void ExportToDwg(Document doc, IList<Element> elements)

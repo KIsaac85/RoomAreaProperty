@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace RoomAreaProperty
 {
+    /// <summary>
+    /// A class to create dxf drawings 
+    /// from area plans
+    /// </summary>
     class DXFExportClass
     {
         public void ExportToDXF(Document doc, IList<Element> elements)

@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace RoomAreaProperty
 {
+    /// <summary>
+    /// A class is created to receive data from revit and add 
+    /// it to each object
+    /// then each object is added to the list
+    /// the list which is supposed to be added to JSON
+    /// </summary>
     class DataRetrieval
     {
         private IList<Element> AreaElements { get; set; }
@@ -46,8 +52,7 @@ namespace RoomAreaProperty
                             AreaObject.Line line = new AreaObject.Line();
                             line.startPoint = curv.GetEndPoint(0);
                             line.endpoint = curv.GetEndPoint(1);
-                            //All properties were retrieved from element and areas except
-                            // the start and endpoint of curves
+
 
                         }
                     }
