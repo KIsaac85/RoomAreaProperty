@@ -1,20 +1,13 @@
 #region Namespaces
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Windows;
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using System.Windows.Forms;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
-using RoomAreaProperty;
 using Newtonsoft.Json;
 #endregion // Namespaces
 
@@ -280,7 +273,7 @@ namespace RoomAreaProperty
     /// in the current editing session.
     /// </summary>
     static string _output_folder_path = null;
-
+    
     /// <summary>
     /// Return true is user selects and confirms
     /// output file name and folder.
@@ -321,39 +314,11 @@ namespace RoomAreaProperty
       ref string message,
       ElementSet elements )
     {
-      UIApplication uiapp = commandData.Application;
-      UIDocument uidoc = uiapp.ActiveUIDocument;
+            UIApplication uiapp = commandData.Application;
+            UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
 
-            Filters flt = new Filters(doc);
-
-            DataRetrieval dt = new DataRetrieval(Filters.elementsAreaReferecne());
-            List<AreaObject> areaobjectlist = new List<AreaObject>();
-            areaobjectlist.AddRange(dt.data());
-
-            #region JSON File Creation
-
-
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-
-            settings.NullValueHandling = NullValueHandling.Ignore;
-
-            Formatting formatting = RoomAreaProperty
-                .UserSettings.JsonIndented ? Formatting.Indented : Formatting.None;
-
-            var sjson = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
-            File.WriteAllText(@"D:\Areas Properties Original.js", sjson);
-
-            #endregion
-
-
-
-            #region Drawings Export
-            DWGExportClass dwgex = new DWGExportClass();
-            DXFExportClass dxf = new DXFExportClass();
-            dwgex.ExportToDwg(doc, Filters.elementsViewReferecne());
-            dxf.ExportToDXF(doc, Filters.elementsViewReferecne());
-            #endregion
+            
 
 
             Autodesk.Revit.ApplicationServices.Application app 
@@ -437,7 +402,44 @@ namespace RoomAreaProperty
       ExportView3D( doc.ActiveView as View3D,
         filename );
 
-      return Result.Succeeded;
+
+            Filters flt = new Filters(doc);
+
+            DataRetrieval dt = new DataRetrieval(Filters.elementsAreaReferecne());
+            List<AreaObject> areaobjectlist = new List<AreaObject>();
+            areaobjectlist.AddRange(dt.data());
+
+            #region JSON File Creation
+
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+
+            settings.NullValueHandling = NullValueHandling.Ignore;
+
+            Formatting formatting = RoomAreaProperty
+                .UserSettings.JsonIndented ? Formatting.Indented : Formatting.None;
+
+            var sjson = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
+
+
+            
+            File.WriteAllText(Path.Combine(_output_folder_path,"Area Propertie.js"), sjson);
+            #endregion
+
+
+            /*
+            #region Drawings Export
+            DWGExportClass dwgex = new DWGExportClass();
+            DXFExportClass dxf = new DXFExportClass();
+            dwgex.ExportToDwg(doc, Filters.elementsViewReferecne());
+            dxf.ExportToDXF(doc, Filters.elementsViewReferecne());
+            #endregion
+            */
+
+
+
+
+            return Result.Succeeded;
     }
   }
 }
