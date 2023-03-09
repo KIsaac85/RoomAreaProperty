@@ -13,7 +13,8 @@ namespace RoomAreaProperty
     /// </summary>
     class DXFExportClass
     {
-        public void ExportToDXF(Document doc, IList<Element> elements)
+
+        public void ExportToDXF(Document doc, IList<Element> elements, string filepath)
         {
             
             List<ElementId> selectids = new List<ElementId>();
@@ -39,7 +40,7 @@ namespace RoomAreaProperty
                 options.Colors = ExportColorMode.TrueColorPerView;
                 options.FileVersion = ACADVersion.R2013;
                 
-                doc.Export("G:\\FreeLancing\\Fievr", "", selectids, options);
+                doc.Export($"{filepath}", "", selectids, options);
                 ElementId dwgsetid = dwgSettings.Id;
                 doc.Delete(dwgsetid);
 

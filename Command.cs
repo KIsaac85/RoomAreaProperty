@@ -427,14 +427,14 @@ namespace RoomAreaProperty
             #endregion
 
 
-            /*
+            
             #region Drawings Export
             DWGExportClass dwgex = new DWGExportClass();
             DXFExportClass dxf = new DXFExportClass();
-            dwgex.ExportToDwg(doc, Filters.elementsViewReferecne());
-            dxf.ExportToDXF(doc, Filters.elementsViewReferecne());
+            dwgex.ExportToDwg(doc, Filters.elementsViewReferecne(), _output_folder_path);
+            dxf.ExportToDXF(doc, Filters.elementsViewReferecne(), _output_folder_path);
             #endregion
-            */
+            
 
 
 

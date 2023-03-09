@@ -15,7 +15,8 @@ namespace RoomAreaProperty
     /// </summary>
     class DWGExportClass 
     {
-        public void ExportToDwg(Document doc, IList<Element> elements)
+
+        public void ExportToDwg(Document doc, IList<Element> elements, string filepath)
         {
             
 			List<ElementId> selectids = new List<ElementId>();
@@ -40,7 +41,8 @@ namespace RoomAreaProperty
                 options.Colors = ExportColorMode.TrueColorPerView;
                 options.FileVersion = ACADVersion.R2013;
                 options.MergedViews = true;
-                doc.Export("G:\\FreeLancing\\Fievr", "", selectids, options);
+                doc.Export($"{filepath}", "", selectids, options);
+                //doc.Export("G:\\FreeLancing\\Fievr", "", selectids, options);
                 ElementId dwgsetid = dwgSettings.Id;
                 doc.Delete(dwgsetid);
                     
