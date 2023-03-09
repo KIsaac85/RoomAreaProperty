@@ -8,7 +8,7 @@ using Autodesk.Revit.UI;
 using System.Reflection;
 #endregion
 
-namespace RvtVa3c
+namespace RoomAreaProperty
 {
   class App : IExternalApplication
   {

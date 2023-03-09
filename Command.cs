@@ -18,7 +18,7 @@ using RoomAreaProperty;
 using Newtonsoft.Json;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreaProperty
 {
   [Transaction( TransactionMode.Manual )]
   public class Command : IExternalCommand

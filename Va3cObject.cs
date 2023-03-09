@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreaProperty
 {
   /// <summary>
   /// three.js object class, successor of Va3cScene.

@@ -7,9 +7,10 @@ using System.IO;
 using Autodesk.Revit.DB;
 //using Autodesk.Revit.Utility;
 using Newtonsoft.Json;
+using RoomAreaProperty;
 #endregion // Namespaces
 
-namespace RvtVa3c
+namespace RoomAreaProperty
 {
   // Done:
   // Check instance transformation

@@ -7,7 +7,7 @@
 		<AddinID>
 			1B214995-EC67-45CC-91B5-0FBCC946DB61
 		</AddinID>
-		<FullClassName>RoomAreaProperty.AreasExport</FullClassName>
+		<FullClassName>RoomAreaProperty.Command</FullClassName>
 		<ClientId>
 			FBC008F6-0D93-4DB0-9CFF-CA8575F5C8F1
 		</ClientId>
