@@ -1,4 +1,6 @@
 ﻿using Autodesk.Revit.DB;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -19,16 +21,16 @@ namespace RoomAreaProperty
         [DataMember]
         public double areaValue { get; set; }
         [DataMember]
-        public Level areaFloorLevel { get; set; }
+        public string areaFloorLevel { get; set; }
         [DataMember]
-        public List<Curve> areaBoundingLines { get; set; }
+        public List<BoundaryLine> BoundaryLinesPoints { get; set; }
 
         
-        public class Line
+        public class BoundaryLine
         {
-            [DataMember]
+            
             public XYZ startPoint { get; set; }
-            [DataMember]
+            
             public XYZ endpoint { get; set; }
         }
         /// <summary>
@@ -36,10 +38,9 @@ namespace RoomAreaProperty
         /// </summary>
         public AreaObject()
         {
-
-            areaBoundingLines = new List<Curve>();
+            BoundaryLinesPoints = new List<BoundaryLine>();
         }
-
+       
  
 
     }
