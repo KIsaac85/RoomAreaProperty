@@ -29,34 +29,15 @@ namespace RoomAreaProperty
             
 
 
-            //To convert from internal units to the format units
-            FormatOptions areaFormatOptions = doc.GetUnits().GetFormatOptions(SpecTypeId.Area);
-            ForgeTypeId areaUnit = areaFormatOptions.GetUnitTypeId();
+
 
             Filters flt = new Filters(doc);
-            List<Element> AreaElements = new List<Element>();
-            AreaElements.AddRange(Filters.elementsAreaReferecne());
-            DataRetrieval dt = new DataRetrieval(AreaElements);
+
+            DataRetrieval dt = new DataRetrieval(Filters.elementsAreaReferecne());
             List<AreaObject> areaobjectlist = new List<AreaObject>();
             areaobjectlist.AddRange(dt.data());
 
             #region JSON File Creation
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var item in areaobjectlist)
-            {
-                
-                    
-                foreach (var item1 in item.BoundaryLinesPoints)
-                {
-                    sb.AppendLine(item1.endpoint.ToString());
-                }
-            }
-
-
-
-            TaskDialog.Show("sb", sb.ToString());
-            
 
             
             JsonSerializerSettings settings = new JsonSerializerSettings();
@@ -70,16 +51,16 @@ namespace RoomAreaProperty
             File.WriteAllText(@"D:\Areas Properties Original.js", sjson);
             
             #endregion
+             
 
-
-            /*
+            
             #region Drawings Export
-            DrawingsExportClass dwgex = new DrawingsExportClass();
+            DWGExportClass dwgex = new DWGExportClass();
             DXFExportClass dxf = new DXFExportClass();
             dwgex.ExportToDwg(doc, Filters.elementsViewReferecne());
             dxf.ExportToDXF(doc, Filters.elementsViewReferecne()); 
             #endregion
-            */
+            
 
             return Result.Succeeded;
         }

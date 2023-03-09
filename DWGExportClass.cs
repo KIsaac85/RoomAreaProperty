@@ -13,7 +13,7 @@ namespace RoomAreaProperty
     /// A class to create drawings 
     /// from area plans
     /// </summary>
-    class DrawingsExportClass 
+    class DWGExportClass 
     {
         public void ExportToDwg(Document doc, IList<Element> elements)
         {
