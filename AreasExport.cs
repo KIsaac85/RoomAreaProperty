@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Text;
 using Autodesk.Revit.UI;
@@ -26,7 +26,7 @@ namespace RoomAreaProperty
             ///some lines will be moved or replaced this is not final!
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-            string myjs ;
+            
 
 
             //To convert from internal units to the format units
@@ -41,6 +41,24 @@ namespace RoomAreaProperty
             areaobjectlist.AddRange(dt.data());
 
             #region JSON File Creation
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in areaobjectlist)
+            {
+                
+                    
+                foreach (var item1 in item.BoundaryLinesPoints)
+                {
+                    sb.AppendLine(item1.endpoint.ToString());
+                }
+            }
+
+
+
+            TaskDialog.Show("sb", sb.ToString());
+            
+
+            
             JsonSerializerSettings settings = new JsonSerializerSettings();
 
             settings.NullValueHandling = NullValueHandling.Ignore;
@@ -48,19 +66,20 @@ namespace RoomAreaProperty
             Formatting formatting = RoomAreaProperty
                 .UserSettings.JsonIndented ? Formatting.Indented : Formatting.None;
 
-            myjs = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
-            File.WriteAllText(@"D:\Areas Properties Original.js", myjs);
+            var sjson = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
+            File.WriteAllText(@"D:\Areas Properties Original.js", sjson);
+            
             #endregion
 
 
-
+            /*
             #region Drawings Export
             DrawingsExportClass dwgex = new DrawingsExportClass();
             DXFExportClass dxf = new DXFExportClass();
             dwgex.ExportToDwg(doc, Filters.elementsViewReferecne());
             dxf.ExportToDXF(doc, Filters.elementsViewReferecne()); 
             #endregion
-
+            */
 
             return Result.Succeeded;
         }

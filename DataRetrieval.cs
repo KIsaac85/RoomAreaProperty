@@ -32,31 +32,29 @@ namespace RoomAreaProperty
             {
                 foreach (Element _element in AreaElements)
                 {
-                    AreaObject areaObject = new AreaObject();
+                    AreaObject arObject = new AreaObject();
                     Options _options = new Options();
                     Area _area = _element as Area;
                     SpatialElementBoundaryOptions spOPT = new SpatialElementBoundaryOptions();
-                    areaObject.ID = _area.Id;
-                    areaObject.areaValue = _area.Area;
-                    areaObject.areaFloorLevel = _area.Level;
+                    arObject.ID = _area.Id;
+                    arObject.areaValue = _area.Area;
+                    arObject.areaFloorLevel = _area.Level.Name;
                     //The forloop is created to retrieve the boundry lines start and end points.
                     foreach (var boundarySegments in _area.GetBoundarySegments(spOPT))
                     {
-
+                        
                         foreach (var item in boundarySegments)
                         {
                             Curve curv = item.GetCurve();
-
-                            areaObject.areaBoundingLines.Add(curv);
-
-                            AreaObject.Line line = new AreaObject.Line();
+                            AreaObject.BoundaryLine  line = new AreaObject.BoundaryLine();
                             line.startPoint = curv.GetEndPoint(0);
                             line.endpoint = curv.GetEndPoint(1);
-
+                            arObject.BoundaryLinesPoints.Add(line);
 
                         }
+                        
                     }
-                    AreaObjectsList.Add(areaObject);
+                    AreaObjectsList.Add(arObject);
                 } 
             }
             return AreaObjectsList;
