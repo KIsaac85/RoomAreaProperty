@@ -25,13 +25,13 @@ namespace RoomAreaProperty
             ViewsElements = new List<Element>();
 
         }
-        public static IList<Element> elementsAreaReferecne()
+        public  IList<Element> elementsAreaReferecne()
         {
             AreaElements = AreasCollector.WherePasses(AreaFilter).WhereElementIsNotElementType().ToElements();
 
             return AreaElements;
         }
-        public static IList<Element> elementsViewReferecne()
+        public  IList<Element> elementsViewReferecne()
         {
             
             ViewsElements = ViewsCollector.WherePasses(ViewsFilter).WhereElementIsNotElementType().ToElements();

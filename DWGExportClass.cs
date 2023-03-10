@@ -15,39 +15,53 @@ namespace RoomAreaProperty
     /// </summary>
     class DWGExportClass 
     {
-
+        private List<ElementId> selectids { get; set; }
+        private View v { get; set; }
+        private DWGExportOptions options { get; set; }
+        
+        private ExportDWGSettings dwgSettings { get; set; }
+        
+        private ElementId dwgsetid { get; set; }
+        public DWGExportClass()
+        {
+            selectids = new List<ElementId>();
+        }
         public void ExportToDwg(Document doc, IList<Element> elements, string filepath)
         {
             
-			List<ElementId> selectids = new List<ElementId>();
+			 
            
             foreach (var element in elements)
             {
-                View v = element as View;
+                v = element as View;
                 if (v.CanBePrinted && v.ViewType == ViewType.AreaPlan)
                 
                 selectids.Add(v.Id);
             }
 
 
-
-                
+            if (selectids.Any())
+            {
                 using (Transaction tx = new Transaction(doc))
                 {
-                tx.Start("Export");
-                DWGExportOptions options = new DWGExportOptions();
-                ExportDWGSettings dwgSettings = ExportDWGSettings.Create(doc, "filexport");
-                options = dwgSettings.GetDWGExportOptions();
-                options.Colors = ExportColorMode.TrueColorPerView;
-                options.FileVersion = ACADVersion.R2013;
-                options.MergedViews = true;
-                doc.Export($"{filepath}", "", selectids, options);
-                //doc.Export("G:\\FreeLancing\\Fievr", "", selectids, options);
-                ElementId dwgsetid = dwgSettings.Id;
-                doc.Delete(dwgsetid);
-                    
-                tx.Commit();
+                    tx.Start("Export");
+                    options = new DWGExportOptions();
+                    dwgSettings = ExportDWGSettings.Create(doc, "filexport");
+                    options = dwgSettings.GetDWGExportOptions();
+                    options.Colors = ExportColorMode.TrueColorPerView;
+                    options.FileVersion = ACADVersion.R2013;
+                    options.MergedViews = true;
+                    doc.Export($"{filepath}", "", selectids, options);
+
+                    dwgsetid = dwgSettings.Id;
+                    doc.Delete(dwgsetid);
+
+                    tx.Commit();
                 }
+            }
+
+
+            
 				
 			
             

@@ -321,8 +321,7 @@ namespace RoomAreaProperty
             
 
 
-            Autodesk.Revit.ApplicationServices.Application app 
-        = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
      
 
       // Check that we are in a 3D view.
@@ -399,42 +398,47 @@ namespace RoomAreaProperty
 
       // Save file.
 
-      ExportView3D( doc.ActiveView as View3D,
-        filename );
+      ExportView3D( doc.ActiveView as View3D, filename );
 
-
+            //Filter to object to retrieve list of elements
             Filters flt = new Filters(doc);
 
-            DataRetrieval dt = new DataRetrieval(Filters.elementsAreaReferecne());
+            DataRetrieval dt = new DataRetrieval(flt.elementsAreaReferecne());
             List<AreaObject> areaobjectlist = new List<AreaObject>();
             areaobjectlist.AddRange(dt.data());
 
             #region JSON File Creation
 
 
-            JsonSerializerSettings settings = new JsonSerializerSettings();
+            if (areaobjectlist.Count != 0)
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
 
-            settings.NullValueHandling = NullValueHandling.Ignore;
+                settings.NullValueHandling = NullValueHandling.Ignore;
 
-            Formatting formatting = RoomAreaProperty
-                .UserSettings.JsonIndented ? Formatting.Indented : Formatting.None;
+                Formatting formatting = RoomAreaProperty
+                    .UserSettings.JsonIndented ? Formatting.Indented : Formatting.None;
 
-            var sjson = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
+                var sjson = JsonConvert.SerializeObject(areaobjectlist, formatting, settings);
 
 
-            
-            File.WriteAllText(Path.Combine(_output_folder_path,"Area Propertie.js"), sjson);
+                //Save file in the same directory
+                File.WriteAllText(Path.Combine(_output_folder_path, "Area Propertie.js"), sjson);
+            }
+
+            else
+                TaskDialog.Show("No Data", "There are no rooms areas to export.");
             #endregion
 
 
-            
+
             #region Drawings Export
             DWGExportClass dwgex = new DWGExportClass();
             DXFExportClass dxf = new DXFExportClass();
-            dwgex.ExportToDwg(doc, Filters.elementsViewReferecne(), _output_folder_path);
-            dxf.ExportToDXF(doc, Filters.elementsViewReferecne(), _output_folder_path);
+            dwgex.ExportToDwg(doc, flt.elementsViewReferecne(), _output_folder_path);
+            dxf.ExportToDXF(doc, flt.elementsViewReferecne(), _output_folder_path);
             #endregion
-            
+
 
 
 
